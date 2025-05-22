@@ -24,6 +24,10 @@ NUM_PRODUCTS = random.randint(50,100)
 NUM_CATEGORIES = random.randint(5,10)
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
+today_date_obj = datetime.datetime.strptime(TODAY, '%Y-%m-%d').date()
+start_date_obj = today_date_obj - datetime.timedelta(days=49)
+START_DATE = start_date_obj.strftime('%Y-%m-%d')
+
 # --- Helper Functions ---
 def generate_categories(num_categories):
     categories = []
@@ -156,7 +160,7 @@ def upload_tuples_to_gcs_as_csv(
 def genearete_product_and_sales_data(request: Request):
     
     try:
-        dates = generate_date_list('2025-01-01',TODAY)
+        dates = generate_date_list(START_DATE,TODAY)
         for date in dates:
 
             catalog_blob_name = f'product_catalog/date={date}/product_catalog_for_{date}.csv'
