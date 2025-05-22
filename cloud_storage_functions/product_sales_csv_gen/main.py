@@ -159,8 +159,8 @@ def genearete_product_and_sales_data(request: Request):
         dates = generate_date_list('2025-01-01',TODAY)
         for date in dates:
 
-            catalog_blob_name = f'product_catalog/product_catalog_for_{date}.csv'
-            sales_blob_name = f'sales_data/sales_data_for_{date}.csv'
+            catalog_blob_name = f'product_catalog/date={date}/product_catalog_for_{date}.csv'
+            sales_blob_name = f'sales_data/date={date}/sales_data_for_{date}.csv'
 
             catalog_blob = bucket_instance.blob(catalog_blob_name)
             sales_blob = bucket_instance.blob(sales_blob_name)
