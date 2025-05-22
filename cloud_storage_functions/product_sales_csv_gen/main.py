@@ -181,5 +181,6 @@ def genearete_product_and_sales_data(request: Request):
 
                 return 'Succesfully read GCS files and uploaded pending files', 200
     except Exception as e:
-        raise(f'Error processing or adding files to GCS {e}')
+        return  f"❌ Errors encountered plase review, {e} rows", 500
+        
             
