@@ -179,7 +179,7 @@ def genearete_product_and_sales_data(request: Request):
                 # Sales data
                 upload_tuples_to_gcs_as_csv(sales_blob_name, sales_data)
 
-                return 'Succesfully read GCS files and uploaded pending files', 200
+        return 'Succesfully read GCS files and uploaded pending files if any ', 200
     except Exception as e:
         return  f"❌ Errors encountered plase review, {e} rows", 500
         
