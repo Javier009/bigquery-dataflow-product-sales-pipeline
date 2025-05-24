@@ -1,0 +1,4 @@
+pytz
+Faker
+Flask
+google-cloud-storage
