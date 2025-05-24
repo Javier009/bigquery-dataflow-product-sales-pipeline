@@ -30,7 +30,7 @@ pacific_time_now = utc_now.astimezone(pacific_tz)
 today_date_object = pacific_time_now - timedelta(hours=1) # To get complete data from prev hour
 TODAY = today_date_object.strftime('%Y-%m-%d')
 TODAY_LATEST_FULL_HOUR = today_date_object.strftime('%H')
-
+print(f'Max date: {TODAY} and max hour: {TODAY_LATEST_FULL_HOUR}')
 
 start_date_obj = today_date_object - timedelta(days=2)  # Change for backfill or run check on more dates
 START_DATE = start_date_obj.strftime('%Y-%m-%d')
