@@ -5,6 +5,7 @@ import io
 import csv
 from faker import Faker
 from datetime import datetime, timedelta
+import json
 
 fake = Faker()
 
@@ -292,3 +293,26 @@ def upload_tuples_to_gcs_as_csv(
 
     except Exception as e:
         print(f"An error occurred while uploading {destination_blob_name}: {e}")
+
+
+def publish_message_to_pub_sub(inventory_updates:list, publisher_object, topic_path):    
+    for event in inventory_updates:
+        try:
+            message = {'inventory_date': event[0],
+                    'inventory_hour': event[1],
+                    'product_id': event[2],
+                    'in_stock': event[3],
+                    'new_product' : event[4],
+                    'returned_product': event[5],
+                    'units_sold': event[6],
+                    'final_stock': event[7]}
+            
+            if message['final_stock'] < 0:
+                message_bytes = json.dumps(message).encode("utf-8")
+                future = publisher_object.publish(topic_path, message_bytes)
+                print(f"Published message ID: {future.result()}")
+            else:
+                pass
+        except Exception as e:
+            print(f"Error publishing message for event {event}: {e}")
+        

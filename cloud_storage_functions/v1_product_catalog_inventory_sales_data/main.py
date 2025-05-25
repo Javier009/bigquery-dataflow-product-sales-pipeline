@@ -12,6 +12,7 @@ from utils.supporting_functions import *
 
 # Import Cloud Storage 
 from google.cloud import storage
+from google.cloud import pubsub_v1
 
 fake = Faker()
 
@@ -38,6 +39,12 @@ START_DATE_HOUR = '00'
 
 NUM_PRODUCTS = random.randint(50,100)
 STATIC_PRODUCT_ARCHETYPES = generate_static_products()
+
+# ----- PUB/SUB TOPIC CONFIGURATION ----
+
+TOPIC_ID = 'inventory-updates-streaming'
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
 
 # product_catalog = create_static_product_catalog(NUM_PRODUCTS,STATIC_PRODUCT_ARCHETYPES,'2025-01-01', '13')
 # pre_sales_inventory = generate_random_pre_sales_inventory(product_catalog, '2025-01-01', '13')
@@ -86,6 +93,12 @@ def generate_data(request:Request):
                         print(f'{inventory_blob_name} does not exists, creating file')
                         product_inventory = update_inventory(product_sales,pre_sales_inventory) 
                         upload_tuples_to_gcs_as_csv(STORAGE_BUCKET, bucket_instance, inventory_blob_name, product_inventory) # Upload Inventory Catalog
+
+                    # Send message to Pub/Sub for negative stock --> Straming Data Flow Pipeline
+
+                    publish_message_to_pub_sub(product_inventory, publisher, topic_path)
+
+
         return 'Data generated and uploaded succesfully', 200
     except Exception as e:
         return  f"❌ Errors encountered plase review, {e} rows", 500
