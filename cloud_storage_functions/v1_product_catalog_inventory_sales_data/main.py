@@ -92,10 +92,10 @@ def generate_data(request:Request):
                         print(f'{inventory_blob_name} does not exists, creating file')
                         product_inventory = update_inventory(product_sales,pre_sales_inventory) 
                         upload_tuples_to_gcs_as_csv(STORAGE_BUCKET, bucket_instance, inventory_blob_name, product_inventory) # Upload Inventory Catalog
+                        # Send message to Pub/Sub for negative stock --> Straming Data Flow Pipeline
+                        publish_message_to_pub_sub(product_inventory, publisher, topic_path)
 
-                    # Send message to Pub/Sub for negative stock --> Straming Data Flow Pipeline
-
-                    publish_message_to_pub_sub(product_inventory, publisher, topic_path)
+                   
 
 
         return 'Data generated and uploaded succesfully', 200
