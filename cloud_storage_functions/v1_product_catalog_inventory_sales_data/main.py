@@ -10,7 +10,7 @@ from flask import Request
 # Supporting Functions imports
 from utils.supporting_functions import *
 
-# Import Cloud Storage 
+# Import Cloud Libraries 
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
