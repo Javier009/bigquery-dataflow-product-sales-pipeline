@@ -24,22 +24,6 @@ STORAGE_BUCKET = 'retail_data_v1'
 storage_client = storage.Client()
 bucket_instance = storage_client.bucket(STORAGE_BUCKET)
 
-# --- Dates Configuration ---
-pacific_tz = pytz.timezone('America/Los_Angeles') 
-utc_now = datetime.now(pytz.utc)
-pacific_time_now = utc_now.astimezone(pacific_tz)
-today_date_object = pacific_time_now - timedelta(hours=1) # To get complete data from prev hour
-TODAY = today_date_object.strftime('%Y-%m-%d')
-TODAY_LATEST_FULL_HOUR = today_date_object.strftime('%H')
-print(f'Max date: {TODAY} and max hour: {TODAY_LATEST_FULL_HOUR}')
-
-start_date_obj = today_date_object - timedelta(days=2)  # Change for backfill or run check on more dates
-START_DATE = start_date_obj.strftime('%Y-%m-%d')
-START_DATE_HOUR = '00'
-
-NUM_PRODUCTS = random.randint(50,100)
-STATIC_PRODUCT_ARCHETYPES = generate_static_products()
-
 # ----- PUB/SUB TOPIC CONFIGURATION ----
 
 TOPIC_ID = 'inventory-updates-streaming'
@@ -51,10 +35,25 @@ topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
 # product_sales = generate_sales_data(product_catalog, '2025-01-01', '13')
 # product_inventory = update_inventory(product_sales,pre_sales_inventory) 
 
-dates = generate_date_list(START_DATE,TODAY)
-hours = [ f"{h:02d}" for h in range(24)]
-
 def generate_data(request:Request):
+
+    STATIC_PRODUCT_ARCHETYPES = generate_static_products()
+    NUM_PRODUCTS = random.randint(50,100)
+
+    # --- Dates Configuration ---
+    pacific_tz = pytz.timezone('America/Los_Angeles') 
+    utc_now = datetime.now(pytz.utc)
+    pacific_time_now = utc_now.astimezone(pacific_tz)
+    today_date_object = pacific_time_now - timedelta(hours=1) # To get complete data from prev hour
+    TODAY = today_date_object.strftime('%Y-%m-%d')
+    TODAY_LATEST_FULL_HOUR = today_date_object.strftime('%H')
+    print(f'Max date: {TODAY} and max hour: {TODAY_LATEST_FULL_HOUR}')
+
+    start_date_obj = today_date_object - timedelta(days=2)  # Change for backfill or run check on more dates
+    START_DATE = start_date_obj.strftime('%Y-%m-%d')
+    dates = generate_date_list(START_DATE,TODAY)
+    hours = [ f"{h:02d}" for h in range(24)]
+
     try:
         for date in dates:
             for hour in hours:
