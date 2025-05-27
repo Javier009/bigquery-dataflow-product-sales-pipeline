@@ -95,6 +95,7 @@ def generate_product_catalog_data(num_products, ingestion_date):
         ))
     return products_data
 
+
 def generate_sales_data(product_catalog:list, sales_date):
     sales_data = []
     headers = ('transaction_date', 'transaction_id', 'customer_id', 'order_country', 'product_id', 'unit_price', 'units_sold', 'discount_applied', 'total_ammount_paid')
@@ -130,6 +131,8 @@ def generate_sales_data(product_catalog:list, sales_date):
                         ))
         
     return sales_data
+
+
 
 def upload_tuples_to_gcs_as_csv(
     destination_blob_name: str,
@@ -169,18 +172,20 @@ def genearete_product_and_sales_data(request: Request):
             catalog_blob = bucket_instance.blob(catalog_blob_name)
             sales_blob = bucket_instance.blob(sales_blob_name)
 
-            if catalog_blob.exists() and sales_blob.exists():
-                print(f'{catalog_blob_name} and {sales_blob_name}  exist, no taking actions')
+            if catalog_blob.exists():
+                print(f'{catalog_blob_name}  exist, no taking actions')                
             else:
-                print(f'{catalog_blob_name} and {sales_blob_name} dont not exists, creating files')
-
+                print(f'{catalog_blob_name} does not exists, creating file')
                 products_catalog = generate_product_catalog_data(NUM_PRODUCTS, date)
-                sales_data = generate_sales_data(products_catalog, date)
-
-                #Upload to GCS
-                # Product Catalog
+                # Upload Product Catalog
                 upload_tuples_to_gcs_as_csv(catalog_blob_name, products_catalog)
-                # Sales data
+            
+            if sales_blob.exists():
+                print(f'{sales_blob_name} exist, no taking actions') 
+            else:
+                print(f'{sales_blob_name} does not exists, creating file')
+                sales_data = generate_sales_data(products_catalog, date)
+                # Upload Sales Catalog
                 upload_tuples_to_gcs_as_csv(sales_blob_name, sales_data)
 
         return 'Succesfully read GCS files and uploaded pending files if any ', 200
